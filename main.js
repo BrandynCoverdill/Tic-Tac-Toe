@@ -2,7 +2,7 @@
  * Creates gameboard object and it's logic
  * @returns {Object} Gameboard object
  */
-const gameboard = function () {
+const gameboard = (function () {
 	/**
 	 * board for the game
 	 */
@@ -111,7 +111,7 @@ const gameboard = function () {
 		getBoard,
 		resetGame,
 	};
-};
+})();
 
 /**
  * Creates player object and it's logic
@@ -140,6 +140,14 @@ const player = function (name, mark) {
 	const getWins = () => numWins;
 
 	/**
+	 * Set's the player's name
+	 * @param {String} newName the new name of the player
+	 */
+	const setName = (newName) => {
+		name = newName;
+	};
+
+	/**
 	 * Returns the player's name
 	 * @returns {String} player's name
 	 */
@@ -149,17 +157,77 @@ const player = function (name, mark) {
 		getName,
 		getMarker,
 		getWins,
+		setName,
 		win,
 	};
 };
 
+const gameLogic = (function () {
+	/**
+	 * The logic for playing the game
+	 */
+	const play = () => {
+		// Grab the Player names to create player objects
+		let playerOneName = prompt('Enter the name of Player 1.');
+		while (playerOneName.trim() === '') {
+			playerOneName = prompt('Please choose a better name Player 1.');
+		}
+		let playerTwoName = prompt('Enter the name of player 2.');
+		while (playerTwoName.trim() === '') {
+			playerTwoName = prompt('Please choose a better name Player 2.');
+		}
+
+		// Create player objects with their names
+		const playerOne = player(playerOneName, 'x');
+		const playerTwo = player(playerTwoName, 'o');
+
+		// Let player one by the first player to go
+		let currentPlayer = playerOne;
+
+		// Loop until there is a winner or a tie
+		for (let round = 0; round < gameboard.getBoard().length; round++) {
+			// Get the number choosen from the player
+			let playingOnArea = prompt(
+				`${currentPlayer.getName()}, please enter a number from 0-8 to place your marker.`
+			);
+
+			// Check if the player's response is valid
+			while (isNaN(+playingOnArea.trim()) || playingOnArea === '') {
+				playingOnArea = prompt(
+					`${currentPlayer.getName()}, please choose a number from 1-8 only.`
+				);
+			}
+			// Place the player's marker on the board
+			gameboard.placeMarker(+playingOnArea, currentPlayer.getMarker());
+
+			// Output gameboard
+			console.log(gameboard.getBoard());
+
+			// Check if there is a winner
+			if (gameboard.checkWin()) {
+				console.log(gameboard.getBoard());
+				console.log(`${currentPlayer.getName()} wins!`);
+				break;
+			} else {
+				// Switch to the next player
+				switch (currentPlayer) {
+					case playerOne:
+						currentPlayer = playerTwo;
+						break;
+					case playerTwo:
+						currentPlayer = playerOne;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	};
+
+	return {
+		play,
+	};
+})();
+
 // Testing the game/player logic
-const board = gameboard();
-const playerOne = player('Brandyn', 'x');
-
-board.placeMarker(6, playerOne.getMarker());
-board.placeMarker(7, playerOne.getMarker());
-board.placeMarker(8, playerOne.getMarker());
-console.log(board.getBoard());
-
-console.log(board.checkWin());
+gameLogic.play();
