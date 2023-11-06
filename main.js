@@ -262,55 +262,50 @@ const displayBoard = (function () {
 		let i = 0;
 		playAreas.forEach((square) => {
 			square.dataset.id = i++;
+			square.style.cssText = `
+				background: rgb(200, 200, 200);
+				cursor: pointer;
+			`;
 		});
 
-		board.querySelector('[data-id="0"]').style.cssText = `
+		board.querySelector('[data-id="0"]').style.cssText += `
 			border-bottom: 2px solid black;
 			border-right: 2px solid black;
-			cursor: pointer;
 		`;
-		board.querySelector('[data-id="1"]').style.cssText = `
+		board.querySelector('[data-id="1"]').style.cssText += `
 			border-left: 2px solid black;
 			border-bottom: 2px solid black;
 			border-right: 2px solid black;
-			cursor: pointer;
 		`;
-		board.querySelector('[data-id="2"]').style.cssText = `
+		board.querySelector('[data-id="2"]').style.cssText += `
 			border-left: 2px solid black;
 			border-bottom: 2px solid black;
-			cursor: pointer;
 		`;
-		board.querySelector('[data-id="3"]').style.cssText = `
+		board.querySelector('[data-id="3"]').style.cssText += `
 			border-top: 2px solid black;
 			border-right: 2px solid black;
 			border-bottom: 2px solid black;
-			cursor: pointer;
 		`;
-		board.querySelector('[data-id="4"]').style.cssText = `
+		board.querySelector('[data-id="4"]').style.cssText += `
 			border: 2px solid black;
-			cursor: pointer;
 		`;
-		board.querySelector('[data-id="5"]').style.cssText = `
+		board.querySelector('[data-id="5"]').style.cssText += `
 			border-top: 2px solid black;
 			border-left: 2px solid black;
 			border-bottom: 2px solid black;
-			cursor: pointer;
 		`;
-		board.querySelector('[data-id="6"]').style.cssText = `
+		board.querySelector('[data-id="6"]').style.cssText += `
 			border-top: 2px solid black;
 			border-right: 2px solid black;
-			cursor: pointer;
 		`;
-		board.querySelector('[data-id="7"]').style.cssText = `
+		board.querySelector('[data-id="7"]').style.cssText += `
 			border-left: 2px solid black;
 			border-top: 2px solid black;
 			border-right: 2px solid black;
-			cursor: pointer;
 		`;
-		board.querySelector('[data-id="8"]').style.cssText = `
+		board.querySelector('[data-id="8"]').style.cssText += `
 			border-top: 2px solid black;
 			border-left: 2px solid black;
-			cursor: pointer;
 		`;
 
 		// Populate main with the board
