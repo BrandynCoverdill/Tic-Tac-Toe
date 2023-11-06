@@ -88,6 +88,9 @@ const gameboard = (function () {
 		} else {
 			alert('Cannot place marker at this spot!');
 		}
+
+		// TODO : after adding the eventlisteners on the gameboard,
+		// have it call displayBoard.AddMarkerToBoard()
 	};
 
 	/**
@@ -178,11 +181,15 @@ const gameLogic = (function () {
 		}
 
 		// Create player objects with their names
-		const playerOne = player(playerOneName, 'x');
-		const playerTwo = player(playerTwoName, 'o');
+		const playerOne = player(playerOneName, 'X');
+		const playerTwo = player(playerTwoName, 'O');
 
 		// Let player one by the first player to go
 		let currentPlayer = playerOne;
+
+		// TODO : Add event listener for gameboard for possible areas and
+		// have it call
+		// gameboard.placeMarker(e.target.dataset.id, currentPlayer.getMarker())
 
 		// Loop until there is a winner or a tie
 		for (let round = 0; round < gameboard.getBoard().length; round++) {
@@ -331,5 +338,5 @@ const displayBoard = (function () {
 
 // Testing the game/player logic
 displayBoard.createBoard();
-displayBoard.addMarkerToBoard(0, 'X');
+// displayBoard.addMarkerToBoard(0, 'X');
 // gameLogic.play();
