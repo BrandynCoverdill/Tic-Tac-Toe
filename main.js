@@ -1,3 +1,73 @@
+// Form inputs
+const playerOneInput = document.querySelector(
+	'.menu form input:nth-of-type(1)'
+);
+const playerTwoInput = document.querySelector(
+	'.menu form input:nth-of-type(2)'
+);
+const startBtn = document.querySelector('.menu form button');
+const resetBtn = document.querySelector('.reset');
+
+// Make reset button disabled on page load
+resetBtn.setAttribute('disabled', true);
+
+// Reset the game when the reset button is clicked
+resetBtn.addEventListener('click', (e) => {
+	e.preventDefault();
+	resetBtn.setAttribute('disabled', true);
+	startBtn.removeAttribute('disabled');
+	playerOneInput.removeAttribute('disabled');
+	playerTwoInput.removeAttribute('disabled');
+	document.querySelector('.outcome h2').textContent = '';
+	document.querySelector('.turn h2').textContent = '';
+	displayBoard.removeBoard();
+	gameboard.resetGame();
+});
+
+// Start the game when the start button is clicked
+startBtn.addEventListener('click', (e) => {
+	e.preventDefault();
+	// Validate inputs
+
+	// Grab the inputs for the player's name
+	let playerOneName = playerOneInput.value;
+	let playerTwoName = playerTwoInput.value;
+
+	// if player one's input name is bad
+	if (playerOneName.trim() == '') {
+		playerOneInput.focus();
+		playerOneInput.style.border = '1px solid red';
+		document.querySelector('.menu form p:nth-of-type(1)').style.display =
+			'block';
+	} else {
+		playerOneInput.style.border = '1px solid black';
+		document.querySelector('.menu form p:nth-of-type(1)').style.display =
+			'none';
+	}
+
+	// if player two's input name is bad
+	if (playerTwoName.trim() == '') {
+		playerTwoInput.focus();
+		playerTwoInput.style.border = '1px solid red';
+		document.querySelector('.menu form p:nth-of-type(2)').style.display =
+			'block';
+	} else {
+		playerTwoInput.style.border = '1px solid black';
+		document.querySelector('.menu form p:nth-of-type(2)').style.display =
+			'none';
+	}
+
+	// Create player objects and run game
+	if (!playerOneName.trim() == '' && !playerTwoName.trim() == '') {
+		playerOneInput.setAttribute('disabled', true);
+		playerTwoInput.setAttribute('disabled', true);
+		startBtn.setAttribute('disabled', true);
+		const playerOne = player(playerOneName, 'X');
+		const playerTwo = player(playerTwoName, 'O');
+		gameLogic.play(playerOne, playerTwo);
+	}
+});
+
 /**
  * Creates gameboard object and it's logic
  * @returns {Object} Gameboard object
@@ -170,62 +240,74 @@ const gameLogic = (function () {
 	/**
 	 * The logic for playing the game
 	 */
-	const play = () => {
-		// Grab the Player names to create player objects
-		let playerOneName = prompt('Enter the name of Player 1.');
-		while (playerOneName.trim() === '') {
-			playerOneName = prompt('Please choose a better name Player 1.');
-		}
-		let playerTwoName = prompt('Enter the name of player 2.');
-		while (playerTwoName.trim() === '') {
-			playerTwoName = prompt('Please choose a better name Player 2.');
-		}
-
-		// Create player objects with their names
-		const playerOne = player(playerOneName, 'X');
-		const playerTwo = player(playerTwoName, 'O');
-
+	const play = (playerOne, playerTwo) => {
 		// Let player one by the first player to go
 		let currentPlayer = playerOne;
+
+		// Display who's turn it is
+		document.querySelector('.turn h2').textContent =
+			currentPlayer.getName() + "'s turn!";
+
+		// Set the first round to 0 0f 8.
 		let round = 0;
 
-		// Main game logic
+		// Append game to the document
 		displayBoard.createBoard();
+
+		// set variables that reference the game object and it's children
 		const board = document.querySelector('.gameboard');
 		const gameBoardSquares = document.querySelectorAll('.gameboard > div');
+
+		// Add an event listener for when a player clicks on the game
 		gameBoardSquares.forEach((square) => {
 			square.addEventListener('click', (e) => {
-				// Place the marker on the board
+				// if the user clicks on a valid spot on the game
 				if (
 					gameboard.placeMarker(e.target.dataset.id, currentPlayer.getMarker())
 				) {
+					// add to round count of 8
 					round++;
+
 					// Check if there is a winner
 					if (gameboard.checkWin()) {
-						console.log(`${currentPlayer.getName()} wins!`);
+						document.querySelector(
+							'.outcome h2'
+						).textContent = `${currentPlayer.getName()} wins!`;
+						document.querySelector('.turn h2').textContent = '';
 						board.style.cssText += `
 							pointer-events: none;
 						`;
+						// Show reset button for the game
+						resetBtn.removeAttribute('disabled');
 					} else {
 						// Switch to the next player
 						switch (currentPlayer) {
 							case playerOne:
 								currentPlayer = playerTwo;
+								document.querySelector('.turn h2').textContent =
+									currentPlayer.getName() + "'s turn!";
 								break;
 							case playerTwo:
 								currentPlayer = playerOne;
+								document.querySelector('.turn h2').textContent =
+									currentPlayer.getName() + "'s turn!";
 								break;
 							default:
 								break;
 						}
 					}
+					// if the round is past 8, meaning all 8 rounds have been done and
+					// there was no winner on the 8th round
 					if (round === 9) {
+						// If there has been no winner
 						if (!gameboard.checkWin()) {
-							// TODO: Disable the gameboard if there is a tie
 							board.style.cssText += `
 								pointer-events: none;
 							`;
-							console.log('game tied!');
+							document.querySelector('.turn h2').textContent = '';
+							document.querySelector('.outcome h2').textContent = 'Game tied!';
+							// activate the reset button for the game
+							resetBtn.removeAttribute('disabled');
 						}
 					}
 				}
@@ -238,8 +320,18 @@ const gameLogic = (function () {
 	};
 })();
 
+/**
+ * IIFE that creates the visual gameboard object you see in the document
+ */
 const displayBoard = (function () {
 	const main = document.querySelector('main');
+
+	/**
+	 * removes the board from the document
+	 */
+	const removeBoard = () => {
+		main.removeChild(document.querySelector('.gameboard'));
+	};
 
 	/**
 	 * Creates the DOM objects for the gameboard and display in the main dom tag
@@ -331,10 +423,10 @@ const displayBoard = (function () {
 	return {
 		createBoard,
 		addMarkerToBoard,
+		removeBoard,
 	};
 })();
 
 // Testing the game/player logic
-// displayBoard.createBoard();
 // displayBoard.addMarkerToBoard(0, 'X');
-gameLogic.play();
+// gameLogic.play();
