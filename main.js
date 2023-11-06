@@ -80,17 +80,18 @@ const gameboard = (function () {
 	 * Places the player's marker on the gameboard
 	 * @param {Number} index where to put the marker at
 	 * @param {String} mark the mark the player has
+	 * @returns {Boolean} if placing the marker is a success
 	 */
 	const placeMarker = (index, mark) => {
 		// Check if the place hasn't been taken already
 		if (board[index] === undefined) {
 			board[index] = mark;
+			displayBoard.addMarkerToBoard(index, mark);
+			return true;
 		} else {
 			alert('Cannot place marker at this spot!');
+			return false;
 		}
-
-		// TODO : after adding the eventlisteners on the gameboard,
-		// have it call displayBoard.AddMarkerToBoard()
 	};
 
 	/**
@@ -186,53 +187,50 @@ const gameLogic = (function () {
 
 		// Let player one by the first player to go
 		let currentPlayer = playerOne;
+		let round = 0;
 
-		// TODO : Add event listener for gameboard for possible areas and
-		// have it call
-		// gameboard.placeMarker(e.target.dataset.id, currentPlayer.getMarker())
+		// Main game logic
+		displayBoard.createBoard();
+		const board = document.querySelector('.gameboard');
+		const gameBoardSquares = document.querySelectorAll('.gameboard > div');
+		gameBoardSquares.forEach((square) => {
+			square.addEventListener('click', (e) => {
+				// Place the marker on the board
+				if (
+					gameboard.placeMarker(e.target.dataset.id, currentPlayer.getMarker())
+				) {
+					round++;
+					// Output gameboard
+					console.log(gameboard.getBoard());
 
-		// Loop until there is a winner or a tie
-		for (let round = 0; round < gameboard.getBoard().length; round++) {
-			// Get the number choosen from the player
-			let playingOnArea = prompt(
-				`${currentPlayer.getName()}, please enter a number from 0-8 to place your marker.`
-			);
+					// Check if there is a winner
+					if (gameboard.checkWin()) {
+						console.log(gameboard.getBoard());
+						console.log(`${currentPlayer.getName()} wins!`);
+						// TODO: Disable gameboard if there is a win.
+					} else {
+						// Switch to the next player
+						switch (currentPlayer) {
+							case playerOne:
+								currentPlayer = playerTwo;
+								break;
+							case playerTwo:
+								currentPlayer = playerOne;
+								break;
+							default:
+								break;
+						}
+					}
+					if (round === 9) {
+						if (!gameboard.checkWin()) {
+							// TODO: Disable the gameboard if there is a tie
 
-			// Check if the player's response is valid
-			while (isNaN(+playingOnArea.trim()) || playingOnArea === '') {
-				playingOnArea = prompt(
-					`${currentPlayer.getName()}, please choose a number from 1-8 only.`
-				);
-			}
-			// Place the player's marker on the board
-			gameboard.placeMarker(+playingOnArea, currentPlayer.getMarker());
-
-			// Output gameboard
-			console.log(gameboard.getBoard());
-
-			// Check if there is a winner
-			if (gameboard.checkWin()) {
-				console.log(gameboard.getBoard());
-				console.log(`${currentPlayer.getName()} wins!`);
-				break;
-			} else {
-				// Switch to the next player
-				switch (currentPlayer) {
-					case playerOne:
-						currentPlayer = playerTwo;
-						break;
-					case playerTwo:
-						currentPlayer = playerOne;
-						break;
-					default:
-						break;
+							console.log('game tied!');
+						}
+					}
 				}
-			}
-		}
-		// If the game is tied
-		if (!gameboard.checkWin()) {
-			console.log('Game Tied!');
-		}
+			});
+		});
 	};
 
 	return {
@@ -337,6 +335,6 @@ const displayBoard = (function () {
 })();
 
 // Testing the game/player logic
-displayBoard.createBoard();
+// displayBoard.createBoard();
 // displayBoard.addMarkerToBoard(0, 'X');
-// gameLogic.play();
+gameLogic.play();
