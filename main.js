@@ -242,6 +242,7 @@ const displayBoard = (function () {
 	const createBoard = () => {
 		// Create visual gameboard object
 		const board = document.createElement('div');
+		board.classList.add('gameboard');
 		for (let i = 0; i < 9; i++) {
 			const div = document.createElement('div');
 			board.appendChild(div);
@@ -265,6 +266,11 @@ const displayBoard = (function () {
 			square.style.cssText = `
 				background: rgb(200, 200, 200);
 				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-weight: bold;
+				font-size: 80px;
 			`;
 		});
 
@@ -312,11 +318,18 @@ const displayBoard = (function () {
 		main.appendChild(board);
 	};
 
+	const addMarkerToBoard = (index, mark) => {
+		const board = document.querySelector('.gameboard');
+		board.querySelector(`[data-id="${index}"]`).textContent = mark;
+	};
+
 	return {
 		createBoard,
+		addMarkerToBoard,
 	};
 })();
 
 // Testing the game/player logic
 displayBoard.createBoard();
+displayBoard.addMarkerToBoard(0, 'X');
 // gameLogic.play();
