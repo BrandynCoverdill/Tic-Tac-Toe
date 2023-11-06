@@ -200,14 +200,12 @@ const gameLogic = (function () {
 					gameboard.placeMarker(e.target.dataset.id, currentPlayer.getMarker())
 				) {
 					round++;
-					// Output gameboard
-					console.log(gameboard.getBoard());
-
 					// Check if there is a winner
 					if (gameboard.checkWin()) {
-						console.log(gameboard.getBoard());
 						console.log(`${currentPlayer.getName()} wins!`);
-						// TODO: Disable gameboard if there is a win.
+						board.style.cssText += `
+							pointer-events: none;
+						`;
 					} else {
 						// Switch to the next player
 						switch (currentPlayer) {
@@ -224,7 +222,9 @@ const gameLogic = (function () {
 					if (round === 9) {
 						if (!gameboard.checkWin()) {
 							// TODO: Disable the gameboard if there is a tie
-
+							board.style.cssText += `
+								pointer-events: none;
+							`;
 							console.log('game tied!');
 						}
 					}
