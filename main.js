@@ -222,6 +222,10 @@ const gameLogic = (function () {
 				}
 			}
 		}
+		// If the game is tied
+		if (!gameboard.checkWin()) {
+			console.log('Game Tied!');
+		}
 	};
 
 	return {
@@ -229,5 +233,95 @@ const gameLogic = (function () {
 	};
 })();
 
+const displayBoard = (function () {
+	const main = document.querySelector('main');
+
+	/**
+	 * Creates the DOM objects for the gameboard and display in the main dom tag
+	 */
+	const createBoard = () => {
+		// Create visual gameboard object
+		const board = document.createElement('div');
+		for (let i = 0; i < 9; i++) {
+			const div = document.createElement('div');
+			board.appendChild(div);
+		}
+
+		// Style the visual gameboard object
+		board.style.cssText = `
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			grid-template-rows: repeat(3, 1fr);
+			height: 300px;
+			width: 300px;
+			margin: 1em auto;
+		`;
+
+		const playAreas = board.querySelectorAll('div');
+		// Create data-attribute IDs for the squares
+		let i = 0;
+		playAreas.forEach((square) => {
+			square.dataset.id = i++;
+		});
+
+		board.querySelector('[data-id="0"]').style.cssText = `
+			border-bottom: 2px solid black;
+			border-right: 2px solid black;
+			cursor: pointer;
+		`;
+		board.querySelector('[data-id="1"]').style.cssText = `
+			border-left: 2px solid black;
+			border-bottom: 2px solid black;
+			border-right: 2px solid black;
+			cursor: pointer;
+		`;
+		board.querySelector('[data-id="2"]').style.cssText = `
+			border-left: 2px solid black;
+			border-bottom: 2px solid black;
+			cursor: pointer;
+		`;
+		board.querySelector('[data-id="3"]').style.cssText = `
+			border-top: 2px solid black;
+			border-right: 2px solid black;
+			border-bottom: 2px solid black;
+			cursor: pointer;
+		`;
+		board.querySelector('[data-id="4"]').style.cssText = `
+			border: 2px solid black;
+			cursor: pointer;
+		`;
+		board.querySelector('[data-id="5"]').style.cssText = `
+			border-top: 2px solid black;
+			border-left: 2px solid black;
+			border-bottom: 2px solid black;
+			cursor: pointer;
+		`;
+		board.querySelector('[data-id="6"]').style.cssText = `
+			border-top: 2px solid black;
+			border-right: 2px solid black;
+			cursor: pointer;
+		`;
+		board.querySelector('[data-id="7"]').style.cssText = `
+			border-left: 2px solid black;
+			border-top: 2px solid black;
+			border-right: 2px solid black;
+			cursor: pointer;
+		`;
+		board.querySelector('[data-id="8"]').style.cssText = `
+			border-top: 2px solid black;
+			border-left: 2px solid black;
+			cursor: pointer;
+		`;
+
+		// Populate main with the board
+		main.appendChild(board);
+	};
+
+	return {
+		createBoard,
+	};
+})();
+
 // Testing the game/player logic
-gameLogic.play();
+displayBoard.createBoard();
+// gameLogic.play();

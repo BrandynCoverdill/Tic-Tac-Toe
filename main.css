@@ -12,7 +12,12 @@ body {
 	margin: 0 auto;
 }
 
-body,
-html {
-	height: 100%;
+/* Header */
+
+header h1 {
+	text-align: center;
+}
+
+header {
+	border-bottom: 2px solid black;
 }
